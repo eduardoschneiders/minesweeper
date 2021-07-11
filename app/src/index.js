@@ -91,6 +91,7 @@ class Board extends Component {
 
   handleClick(buttons, i, j) {
     if (!this.state.gameInGoodCondition) { return }
+    if (buttons === 2 && !this.state.gridSeted) { return }
     let grid = this.state.grid.slice();
     let status = null
     let cell = clone(grid[i][j])
@@ -129,33 +130,40 @@ class Board extends Component {
     return (
       <div>
         Status: {status}
-        {
-          this.state.grid.map((row, i) => {
-              return(
-                <ul className="row" key={i}>
-                  {
-                    row.map((cel, j) => {
-                        return(
-                          <Cell
-                            key={j}
-                            value={cel['value']}
-                            status={cel['status']}
-                            hasBomb={cel['hasBomb']}
-                            onClick = {
-                              (buttons) => {
-                                this.handleClick(buttons, i, j)
-                              }
-                            }
-                          />
+        <table>
+          <tbody>
+            {
+              this.state.grid.map((row, i) => {
+                  return(
+                    <tr className="row" key={i}>
+                      {
+                        row.map((cel, j) => {
+                            return(
+                              <td key={j}>
+
+                                <Cell
+                                  key={j}
+                                  value={cel['value']}
+                                  status={cel['status']}
+                                  hasBomb={cel['hasBomb']}
+                                  onClick = {
+                                    (buttons) => {
+                                      this.handleClick(buttons, i, j)
+                                    }
+                                  }
+                                />
+                              </td>
+                            )
+                          }
                         )
                       }
-                    )
-                  }
-                </ul>
+                    </tr>
+                  )
+                }
               )
             }
-          )
-        }
+          </tbody>
+        </table>
       </div>
     )
   }
