@@ -38,20 +38,28 @@ class Board extends Component {
   constructor(props) {
     super(props)
 
-    let rowsCount = 10
-    let collumnsCount = 15
-    let bombsCount = 10
+    let defaultRows = 10
+    let defaultCollumns = 15
     let grid = []
-    for (let i = 0; i < rowsCount; i++) {
-      let row = Array(collumnsCount).fill({ value: 0, status: 'covered'})
+
+    for (let i = 0; i < defaultRows; i++) {
+      let row = Array(defaultCollumns).fill({ value: 0, status: 'covered'})
       grid.push(row)
     }
 
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChangeRows = this.handleChangeRows.bind(this);
+    this.handleChangeCollumns = this.handleChangeCollumns.bind(this);
+    this.handleChangeBombs = this.handleChangeBombs.bind(this);
+
     this.state = {
+      targetRows: 10,
+      targetCollumns: 15,
+      targetBombs: 10,
+      rows: 10,
+      collumns: 15,
+      bombs: 10,
       grid: grid,
-      rowsCount: rowsCount,
-      collumnsCount: collumnsCount,
-      bombsCount: bombsCount,
       gridSeted: false,
       gameInGoodCondition: true
     }
@@ -60,9 +68,9 @@ class Board extends Component {
   setGrid(rowClicked, collumnClicked){
     let grid = this.state.grid.slice();
 
-    for (let i = 0; i < this.state['bombsCount']; i++) {
-      let row = randomInt(0, this.state['rowsCount'] - 1)
-      let collumn = randomInt(0, this.state['collumnsCount'] - 1)
+    for (let i = 0; i < this.state.bombs; i++) {
+      let row = randomInt(0, this.state.rows - 1)
+      let collumn = randomInt(0, this.state.collumns - 1)
       let cell = clone(grid[row][collumn])
 
       if (cell['hasBomb'] || (row === rowClicked && collumn === collumnClicked)) {
@@ -78,7 +86,7 @@ class Board extends Component {
     grid.forEach((row, i) => {
       row.forEach((collumn, j) => {
         let cell = clone(collumn)
-        cell['value'] = calculateBombs(i, j, this.state.rowsCount, this.state.collumnsCount, grid)
+        cell['value'] = calculateBombs(i, j, grid)
         grid[i][j] = cell
       })
     });
@@ -138,11 +146,65 @@ class Board extends Component {
     this.setState({ grid: grid })
   }
 
+  handleChangeRows(event) {
+    this.setState({targetRows: parseInt(event.target.value)});
+  }
+
+  handleChangeCollumns(event) {
+    this.setState({targetCollumns: parseInt(event.target.value)});
+  }
+
+  handleChangeBombs(event) {
+    this.setState({targetBombs: parseInt(event.target.value)});
+  }
+
+  handleSubmit(event) {
+    this.setState({
+      rows: this.state.targetRows,
+      collumns: this.state.targetCollumns,
+      bombs: this.state.targetBombs,
+      gameInGoodCondition: true,
+      gridSeted: false
+    })
+
+    let grid = []
+
+    for (let i = 0; i < this.state.targetRows; i++) {
+      let row = Array(this.state.targetCollumns).fill({ value: 0, status: 'covered'})
+      grid.push(row)
+    }
+    console.log(this.state.rows)
+
+    this.setState({
+      grid: grid
+    })
+
+    event.preventDefault();
+  }
+
   render () {
     let status = this.state.gameInGoodCondition ? 'Good conditions' : 'Lost the game'
 
     return (
       <div>
+        <form onSubmit={this.handleSubmit}>
+          <label>
+            Rows:
+            <input type="text" value={this.state.targetRows} onChange={this.handleChangeRows} />
+          </label>
+
+          <label>
+            Collumns:
+            <input type="text" value={this.state.targetCollumns} onChange={this.handleChangeCollumns} />
+          </label>
+
+          <label>
+            Bombs:
+            <input type="text" value={this.state.targetBombs} onChange={this.handleChangeBombs} />
+          </label>
+
+          <input type="submit" value="Start new game" />
+        </form>
         Status: {status}
         <table>
           <tbody>
@@ -183,12 +245,16 @@ class Board extends Component {
   }
 }
 
+
 class Game extends Component {
   render () {
     return(
       <div className="game">
+        <div className="game-form">
+
+        </div>
         <div className="game-board">
-            <Board />
+          <Board/>
         </div>
       </div>
     )
@@ -212,7 +278,7 @@ function clone(hash) {
   return object;
 }
 
-function calculateBombs(row, collumn, maxRows, maxCollumns, grid) {
+function calculateBombs(row, collumn, grid) {
   let total = 0
 
   total += fetchCellBomb(row - 1, collumn - 1, grid)
@@ -236,8 +302,6 @@ function fetchCellBomb(i, j, grid){
 }
 
 function revealAround(i, j, grid, first) {
-  let allRevealed = false
-
   let cell = fetchCell(i, j, grid)
   if (first || (cell && cell['status'] !== 'uncovered')) {
     cell['status'] = 'uncovered'
