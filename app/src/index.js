@@ -90,39 +90,53 @@ class Board extends Component {
   }
 
   handleClick(buttons, i, j) {
-    if (!this.state.gameInGoodCondition) { return }
-    if (buttons === 2 && !this.state.gridSeted) { return }
-    let grid = this.state.grid.slice();
-    let status = null
-    let cell = clone(grid[i][j])
-
     if (!this.state.gridSeted) {
       this.setGrid(i, j)
     }
 
-    if (cell['hasBomb']) {
-      this.setState({gameInGoodCondition: false})
-    }
+    if (!this.state.gameInGoodCondition) { return }
+    if (buttons === 2 && !this.state.gridSeted) { return }
 
-    if (cell['hasBomb']) {
-      status = 'hasBomb'
-    } else if (buttons === 1) {
-      status = 'uncovered'
+    let grid = this.state.grid.slice();
+    let status = null
+    let cell = clone(grid[i][j])
+
+    if (buttons === 1) {
+      if (cell['hasBomb']) {
+        this.setState({gameInGoodCondition: false})
+
+        grid.forEach((row, i) => {
+          row.forEach((collumn, j) => {
+            let newCell = clone(collumn)
+            if (newCell['hasBomb']) {
+              newCell['status'] = 'hasBomb'
+              grid[i][j] = newCell
+            }
+          })
+        });
+
+        status = 'hasBomb'
+      } else {
+        status = 'uncovered'
+      }
     } else if (buttons === 2) {
       if (cell['status'] === 'flagged') {
         status = 'covered'
       } else {
         status = 'flagged'
       }
+    } else if (buttons === 4) {
+      if (cell['status'] === 'covered' || cell['value'] !== 0) { return }
+
+      grid = revealAround(i, j, grid, true)
     }
 
-    cell['status'] = status
+    if (status) { cell['status'] = status }
 
     grid[i][j] = cell
 
     this.setState({ grid: grid })
   }
-
 
   render () {
     let status = this.state.gameInGoodCondition ? 'Good conditions' : 'Lost the game'
@@ -210,7 +224,6 @@ function calculateBombs(row, collumn, maxRows, maxCollumns, grid) {
   total += fetchCellBomb(row + 1, collumn - 1, grid)
   total += fetchCellBomb(row + 0, collumn - 1, grid)
 
-
   return total
 }
 
@@ -219,6 +232,37 @@ function fetchCellBomb(i, j, grid){
     return grid[i][j]['hasBomb'] ? 1 : 0
   } catch (TypeError) {
     return 0
+  }
+}
+
+function revealAround(i, j, grid, first) {
+  let allRevealed = false
+
+  let cell = fetchCell(i, j, grid)
+  if (first || (cell && cell['status'] !== 'uncovered')) {
+    cell['status'] = 'uncovered'
+    grid[i][j] = cell
+
+    if (cell['value'] === 0) {
+      grid = revealAround(i - 1, j - 1, grid, false)
+      grid = revealAround(i - 1, j - 0, grid, false)
+      grid = revealAround(i - 1, j + 1, grid, false)
+      grid = revealAround(i - 0, j + 1, grid, false)
+      grid = revealAround(i + 1, j + 1, grid, false)
+      grid = revealAround(i + 1, j + 0, grid, false)
+      grid = revealAround(i + 1, j - 1, grid, false)
+      grid = revealAround(i + 0, j - 1, grid, false)
+    }
+  }
+
+  return grid
+}
+
+function fetchCell(i, j, grid){
+  try {
+    return grid[i][j]
+  } catch (TypeError) {
+    return false
   }
 }
 

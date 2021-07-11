@@ -20,3 +20,9 @@ body {
 .row .cell {
   float: left;
 }
+
+table tr td {
+  width: 15px;
+  height: 15px;
+  cursor: pointer
+}
