@@ -75,6 +75,14 @@ class Board extends Component {
       grid[row][collumn] = cell
     }
 
+    grid.forEach((row, i) => {
+      row.forEach((collumn, j) => {
+        let cell = clone(collumn)
+        cell['value'] = calculateBombs(i, j, this.state.rowsCount, this.state.collumnsCount, grid)
+        grid[i][j] = cell
+      })
+    });
+
     this.setState({
       grid: grid,
       gridSeted: true
@@ -108,7 +116,6 @@ class Board extends Component {
     }
 
     cell['status'] = status
-    cell['value'] = randomInt(0, 8) // TODO calculae the value
 
     grid[i][j] = cell
 
@@ -176,10 +183,35 @@ ReactDOM.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 // reportWebVitals();
 
-
 function clone(hash) {
   var json = JSON.stringify(hash);
   var object = JSON.parse(json);
 
   return object;
 }
+
+function calculateBombs(row, collumn, maxRows, maxCollumns, grid) {
+  let total = 0
+
+  total += fetchCellBomb(row - 1, collumn - 1, grid)
+  total += fetchCellBomb(row - 1, collumn - 0, grid)
+  total += fetchCellBomb(row - 1, collumn + 1, grid)
+  total += fetchCellBomb(row - 0, collumn + 1, grid)
+  total += fetchCellBomb(row + 1, collumn + 1, grid)
+  total += fetchCellBomb(row + 1, collumn + 0, grid)
+  total += fetchCellBomb(row + 1, collumn - 1, grid)
+  total += fetchCellBomb(row + 0, collumn - 1, grid)
+
+
+  return total
+}
+
+function fetchCellBomb(i, j, grid){
+  try {
+    return grid[i][j]['hasBomb'] ? 1 : 0
+  } catch (TypeError) {
+    return 0
+  }
+}
+
+
