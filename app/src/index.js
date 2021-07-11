@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import reportWebVitals from './reportWebVitals';
+import randomInt from './randomInt';
 
 
 class Cell extends Component {
@@ -10,8 +10,10 @@ class Cell extends Component {
 
     if (this.props.status === 'covered') {
       content = 'C'
-    } else if (this.props.status === 'flagged' ) {
+    } else if (this.props.status === 'flagged') {
       content = 'F'
+    } else if (this.props.status === 'hasBomb') {
+      content = 'B'
     } else {
       content = this.props.value
     }
@@ -38,6 +40,7 @@ class Board extends Component {
 
     let rowsCount = 10
     let collumnsCount = 15
+    let bombsCount = 10
     let grid = []
     for (let i = 0; i < rowsCount; i++) {
       let row = Array(collumnsCount).fill({ value: 0, status: 'covered'})
@@ -45,32 +48,80 @@ class Board extends Component {
     }
 
     this.state = {
-      grid: grid
+      grid: grid,
+      rowsCount: rowsCount,
+      collumnsCount: collumnsCount,
+      bombsCount: bombsCount,
+      gridSeted: false,
+      gameInGoodCondition: true
     }
   }
 
+  setGrid(rowClicked, collumnClicked){
+    let grid = this.state.grid.slice();
+
+    for (let i = 0; i < this.state['bombsCount']; i++) {
+      let row = randomInt(0, this.state['rowsCount'] - 1)
+      let collumn = randomInt(0, this.state['collumnsCount'] - 1)
+      let cell = clone(grid[row][collumn])
+
+      if (cell['hasBomb'] || (row === rowClicked && collumn === collumnClicked)) {
+        i--
+        continue
+      }
+
+      cell['hasBomb'] = true
+      console.log(i, row, collumn)
+      grid[row][collumn] = cell
+    }
+
+    this.setState({
+      grid: grid,
+      gridSeted: true
+    })
+  }
+
   handleClick(buttons, i, j) {
+    if (!this.state.gameInGoodCondition) { return }
     let grid = this.state.grid.slice();
     let status = null
+    let cell = clone(grid[i][j])
 
-    if (buttons === 1) {
+    if (!this.state.gridSeted) {
+      this.setGrid(i, j)
+    }
+
+    if (cell['hasBomb']) {
+      this.setState({gameInGoodCondition: false})
+    }
+
+    if (cell['hasBomb']) {
+      status = 'hasBomb'
+    } else if (buttons === 1) {
       status = 'uncovered'
     } else if (buttons === 2) {
-      if (grid[i][j]['status'] === 'flagged') {
+      if (cell['status'] === 'flagged') {
         status = 'covered'
       } else {
         status = 'flagged'
       }
     }
 
-    grid[i][j] = { value: 2, status: status }
+    cell['status'] = status
+    cell['value'] = randomInt(0, 8) // TODO calculae the value
+
+    grid[i][j] = cell
 
     this.setState({ grid: grid })
   }
 
+
   render () {
+    let status = this.state.gameInGoodCondition ? 'Good conditions' : 'Lost the game'
+
     return (
       <div>
+        Status: {status}
         {
           this.state.grid.map((row, i) => {
               return(
@@ -82,6 +133,7 @@ class Board extends Component {
                             key={j}
                             value={cel['value']}
                             status={cel['status']}
+                            hasBomb={cel['hasBomb']}
                             onClick = {
                               (buttons) => {
                                 this.handleClick(buttons, i, j)
@@ -122,4 +174,12 @@ ReactDOM.render(
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// reportWebVitals();
+
+
+function clone(hash) {
+  var json = JSON.stringify(hash);
+  var object = JSON.parse(json);
+
+  return object;
+}
