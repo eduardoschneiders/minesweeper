@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import Cell from './Cell.js';
 import {randomInt, clone, calculateBombs, revealAround, calculateWinner, revealBombs} from './helpers/BoardHelper.js'
 

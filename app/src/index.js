@@ -1,29 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Board from './Board.js';
+import Game from './Game.js';
 
-
-
-
-
-
-
-
-class Game extends Component {
-  render () {
-    return(
-      <div className="game">
-        <div className="game-form">
-
-        </div>
-        <div className="game-board">
-          <Board/>
-        </div>
-      </div>
-    )
-  }
-}
 
 ReactDOM.render(
   <Game />,
