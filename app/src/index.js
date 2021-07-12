@@ -61,6 +61,7 @@ class Board extends Component {
       bombs: 10,
       grid: grid,
       gridSeted: false,
+      gameStaredAt: null,
       gameWin: false,
       gameLost: false
     }
@@ -80,7 +81,6 @@ class Board extends Component {
       }
 
       cell['hasBomb'] = true
-      console.log(i, row, collumn)
       grid[row][collumn] = cell
     }
 
@@ -94,8 +94,14 @@ class Board extends Component {
 
     this.setState({
       grid: grid,
-      gridSeted: true
+      gridSeted: true,
     })
+
+    if (!this.state.gameStaredAt) {
+      this.setState({
+        gameStaredAt: new Date()
+      })
+    }
   }
 
   handleClick(buttons, i, j) {
@@ -167,6 +173,7 @@ class Board extends Component {
       rows: this.state.targetRows,
       collumns: this.state.targetCollumns,
       bombs: this.state.targetBombs,
+      gameStaredAt: new Date(),
       gameWin: false,
       gameLost: false,
       gridSeted: false
@@ -178,7 +185,6 @@ class Board extends Component {
       let row = Array(this.state.targetCollumns).fill({ value: 0, status: 'covered'})
       grid.push(row)
     }
-    console.log(this.state.rows)
 
     this.setState({
       grid: grid
@@ -199,13 +205,33 @@ class Board extends Component {
     return total
   }
 
-  render () {
+  componentDidMount() {
+    this.interval = setInterval(
+      () => {
+        if (!this.state.gameWin && !this.state.gameLost) {
+          this.setState({ time: Date.now() })
+        }
+      }, 1000);
+  }
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+
+  render () {
     let status = null
     if (this.state.gameWin) {
       status = 'Victory'
     } else if (this.state.gameLost) {
       status = 'Lost the game'
+    }
+
+    let timeStatus = null
+    if (this.state.gameStaredAt) {
+      timeStatus = parseInt((this.state.time - this.state.gameStaredAt) / 1000)
+    } else {
+      timeStatus = 0
     }
 
     return (
@@ -229,7 +255,7 @@ class Board extends Component {
           <input type="submit" value="Start new game" />
         </form>
 
-        Cells covered: {}<br />
+        Time: {timeStatus}<br />
         bombs: {this.state.bombs - this.bombsFound(this.state.grid)}<br />
 
 
