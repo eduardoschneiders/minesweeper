@@ -61,7 +61,8 @@ class Board extends Component {
       bombs: 10,
       grid: grid,
       gridSeted: false,
-      gameInGoodCondition: true
+      gameWin: false,
+      gameLost: false
     }
   }
 
@@ -102,7 +103,7 @@ class Board extends Component {
       this.setGrid(i, j)
     }
 
-    if (!this.state.gameInGoodCondition) { return }
+    if (this.state.gameLost) { return }
     if (buttons === 2 && !this.state.gridSeted) { return }
 
     let grid = this.state.grid.slice();
@@ -111,7 +112,7 @@ class Board extends Component {
 
     if (buttons === 1) {
       if (cell['hasBomb']) {
-        this.setState({gameInGoodCondition: false})
+        this.setState({gameLost: true})
 
         grid.forEach((row, i) => {
           row.forEach((collumn, j) => {
@@ -128,6 +129,8 @@ class Board extends Component {
         status = 'uncovered'
       }
     } else if (buttons === 2) {
+      if (cell['status'] === 'uncovered') { return }
+
       if (cell['status'] === 'flagged') {
         status = 'covered'
       } else {
@@ -139,11 +142,12 @@ class Board extends Component {
       grid = revealAround(i, j, grid, true)
     }
 
+
     if (status) { cell['status'] = status }
 
     grid[i][j] = cell
 
-    this.setState({ grid: grid })
+    this.setState({ grid: grid, gameWin: calculateWinner(this.state.rows * this.state.collumns, this.state.bombs, grid) })
   }
 
   handleChangeRows(event) {
@@ -163,7 +167,8 @@ class Board extends Component {
       rows: this.state.targetRows,
       collumns: this.state.targetCollumns,
       bombs: this.state.targetBombs,
-      gameInGoodCondition: true,
+      gameWin: false,
+      gameLost: false,
       gridSeted: false
     })
 
@@ -182,8 +187,26 @@ class Board extends Component {
     event.preventDefault();
   }
 
+  bombsFound(grid){
+    let total = 0
+
+    grid.forEach((row, i) => {
+      row.forEach((collumn, j) => {
+        if (collumn['status'] === 'flagged') { total++ }
+      })
+    });
+
+    return total
+  }
+
   render () {
-    let status = this.state.gameInGoodCondition ? 'Good conditions' : 'Lost the game'
+
+    let status = null
+    if (this.state.gameWin) {
+      status = 'Victory'
+    } else if (this.state.gameLost) {
+      status = 'Lost the game'
+    }
 
     return (
       <div>
@@ -205,7 +228,12 @@ class Board extends Component {
 
           <input type="submit" value="Start new game" />
         </form>
-        Status: {status}
+
+        Cells covered: {}<br />
+        bombs: {this.state.bombs - this.bombsFound(this.state.grid)}<br />
+
+
+        <strong>{status}</strong>
         <table>
           <tbody>
             {
@@ -216,7 +244,6 @@ class Board extends Component {
                         row.map((cel, j) => {
                             return(
                               <td key={j}>
-
                                 <Cell
                                   key={j}
                                   value={cel['value']}
@@ -330,4 +357,14 @@ function fetchCell(i, j, grid){
   }
 }
 
+function calculateWinner(totalCells, totalBombs, grid) {
+  let cellsRevealed = 0
 
+  grid.forEach((row, i) => {
+    row.forEach((collumn, j) => {
+      if (collumn['status'] === 'uncovered') { cellsRevealed++ }
+    })
+  });
+
+  return cellsRevealed === totalCells - totalBombs
+}
