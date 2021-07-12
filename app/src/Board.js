@@ -92,6 +92,10 @@ class Board extends Component {
 
         status = 'hasBomb'
       } else {
+        if (cell['value'] === 0) {
+          grid = revealAround(i, j, grid, true)
+        }
+
         status = 'uncovered'
       }
     } else if (buttons === 2) {
