@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import GameList from './GameList.js';
 import Board from './Board.js';
+import User from './User.js';
 import './Game.css'
 
 class Game extends Component {
@@ -62,6 +63,7 @@ class Game extends Component {
               onStartGame={this.onStartGame.bind(this)}
             />
           </div>
+          <User />
           <GameList games={this.state.games} onSelectGame={this.onSelectGame.bind(this)}/>
         </div>
       </div>
