@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import Cell from './Cell.js';
 import {randomInt, clone, calculateBombs, revealAround, calculateWinner, revealBombs} from './helpers/BoardHelper.js'
+import './Board.css'
 
 class Board extends Component {
   constructor(props) {
@@ -243,9 +244,9 @@ class Board extends Component {
   render () {
     let status = null
     if (this.state.gameWin) {
-      status = 'Victory'
+      status = 'win'
     } else if (this.state.gameLost) {
-      status = 'Lost the game'
+      status = 'lost'
     }
 
     let timeStatus = null
@@ -257,10 +258,7 @@ class Board extends Component {
 
     return (
       <div>
-        <button onClick={(e) => this.props.onSaveGame(this.state)}>Save</button>
-        <button onClick={(e) => this.resetGame(e)}>Reset</button>
-
-        <form onSubmit={this.handleSubmit}>
+        <form className="config" onSubmit={this.handleSubmit}>
           <label>
             Rows:
             <input type="text" value={this.state.targetRows} onChange={this.handleChangeRows} />
@@ -279,11 +277,21 @@ class Board extends Component {
           <input type="submit" value="New game" />
         </form>
 
-        Time: {timeStatus}<br />
-        bombs: {this.state.bombs - this.bombsFound(this.state.grid)}<br />
+        <div className="status">
+          <div>
+            bombs: {this.state.bombs - this.bombsFound(this.state.grid)}<br />
+          </div>
+          <div>
+            <button
+              className={'face-button ' + status}
+              onClick={(e) => this.resetGame(e) }
+            />
+          </div>
+          <div>
+            Time: {timeStatus}
+          </div>
+        </div>
 
-
-        <strong>{status}</strong>
         <table>
           <tbody>
             {
@@ -317,6 +325,8 @@ class Board extends Component {
             }
           </tbody>
         </table>
+
+        <button className="save-game" onClick={(e) => this.props.onSaveGame(this.state)}>Save Game</button>
       </div>
     )
   }

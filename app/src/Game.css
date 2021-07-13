@@ -1,0 +1,17 @@
+.game {
+  width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
+}
+
+.blur {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 15px;
+  box-shadow: 3px 2px 5px 2px #15070721;
+}
+
+.game-board {
+  padding: 35px
+}

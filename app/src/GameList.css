@@ -1,0 +1,18 @@
+.game-list {
+  padding: 35px
+}
+
+.game-list ul {
+  list-style: none;
+  padding: 0
+}
+
+.game-list ul li{
+  cursor: pointer;
+  margin-bottom: 5px;
+  padding: 10px
+}
+
+.game-list ul li:hover{
+  background: #CCC;
+}

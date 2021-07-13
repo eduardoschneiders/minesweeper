@@ -5,12 +5,15 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #CCC;
+
+  min-height: 100vh;
+  padding: 1px;
+  box-sizing: border-box;
+  background: teal url(https://assets.codepen.io/15664/bliss.jpg) center/cover no-repeat;
+  counter-reset: mines 10;
 }
 
-.game {
 
-}
 
 .row {
   width: 100%;
@@ -21,8 +24,14 @@ body {
   float: left;
 }
 
+table {
+  border-collapse: collapse;
+}
+
 table tr td {
-  width: 15px;
-  height: 15px;
-  cursor: pointer
+  cursor: pointer;
+  text-align: center;
+  border-spacing: 0;
+  margin: 0;
+  padding: 0;
 }

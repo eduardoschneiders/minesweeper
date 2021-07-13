@@ -1,0 +1,57 @@
+.save-game {
+  width: 100px;
+  padding: 10px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+}
+
+form.config {
+  margin-bottom: 20px;
+  padding-top: 20px;
+}
+
+form.config input[type=text]  {
+  width: 18px;
+  padding: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+form.config input[type=submit]  {
+  width: 90px;
+  padding: 10px;
+  margin-left: 10px;
+}
+
+.face-button {
+  background-image: url(https://minesweeper.online/img/skins/hd/face_unpressed.svg?v=2);
+  background-size: 100%;
+  width: 39px;
+  height: 39px;
+  cursor: pointer;
+}
+
+.face-button.lost {
+  background-image: url(https://minesweeper.online/img/skins/hd/face_lose.svg?v=2);
+}
+
+.face-button.win {
+  background-image: url(https://minesweeper.online/img/skins/hd/face_win.svg?v=2);
+}
+
+.status {
+  margin-left: auto;
+  margin-right: auto;
+  width: 210px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.status button {
+  margin: 0 10px
+}

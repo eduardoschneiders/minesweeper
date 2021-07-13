@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import GameList from './GameList.js';
 import Board from './Board.js';
+import './Game.css'
 
 class Game extends Component {
   constructor(props) {
@@ -47,24 +48,21 @@ class Game extends Component {
       currentGameId: id,
       currentGame: game
     })
-
   }
 
   render () {
     return(
       <div className="game">
-        <button onClick={() => console.log(this.state)}>state</button>
-        <GameList games={this.state.games} onSelectGame={this.onSelectGame.bind(this)}/>
-        <div className="game-form">
-
-        </div>
-        <div className="game-board">
-          <Board
-            onSaveGame={(state) => this.onSaveGame(state) }
-            currentGameId={this.state.currentGameId}
-            currentGame={this.state.games[this.state.currentGameId]}
-            onStartGame={this.onStartGame.bind(this)}
-          />
+        <div className="blur">
+          <div className="game-board">
+            <Board
+              onSaveGame={(state) => this.onSaveGame(state) }
+              currentGameId={this.state.currentGameId}
+              currentGame={this.state.games[this.state.currentGameId]}
+              onStartGame={this.onStartGame.bind(this)}
+            />
+          </div>
+          <GameList games={this.state.games} onSelectGame={this.onSelectGame.bind(this)}/>
         </div>
       </div>
     )

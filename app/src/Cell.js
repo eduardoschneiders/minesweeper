@@ -1,22 +1,23 @@
 import { Component } from 'react';
+import './Cell.css'
 
 class Cell extends Component {
   render () {
     let content = null
 
     if (this.props.status === 'covered') {
-      content = 'C'
+
     } else if (this.props.status === 'flagged') {
-      content = 'F'
+      content = '🚩'
     } else if (this.props.status === 'hasBomb') {
-      content = 'B'
+      content = '💣'
     } else {
-      content = this.props.value
+      if (this.props.value !== 0) { content = this.props.value }
     }
 
     return (
       <div
-        className="cell"
+        className={'cell ' + this.props.status}
         onContextMenu={ (e) => e.preventDefault() }
         onMouseDown={
           (e) => {
