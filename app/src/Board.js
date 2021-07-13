@@ -31,7 +31,8 @@ class Board extends Component {
       gridSeted: false,
       gameStaredAt: null,
       gameWin: false,
-      gameLost: false
+      gameLost: false,
+      currentGameId: null
     }
   }
 
@@ -135,6 +136,29 @@ class Board extends Component {
   }
 
   handleSubmit(event) {
+    // this.setState({
+    //   rows: this.state.targetRows,
+    //   collumns: this.state.targetCollumns,
+    //   bombs: this.state.targetBombs,
+    //   gameStaredAt: new Date(),
+    //   gameWin: false,
+    //   gameLost: false,
+    //   gridSeted: false
+    // })
+
+    // let grid = []
+
+    // for (let i = 0; i < this.state.targetRows; i++) {
+    //   let row = Array(this.state.targetCollumns).fill({ value: 0, status: 'covered'})
+    //   grid.push(row)
+    // }
+
+    // this.setState({
+    //   grid: grid
+    // })
+
+    // this.resetGame(event)
+
     this.setState({
       rows: this.state.targetRows,
       collumns: this.state.targetCollumns,
@@ -156,7 +180,52 @@ class Board extends Component {
       grid: grid
     })
 
+    console.log('heheheree', this.state)
+
+    this.props.onStartGame({
+      grid: grid,
+      rows: this.state.targetRows,
+      collumns: this.state.targetCollumns,
+      bombs: this.state.targetBombs,
+      gameStaredAt: new Date(),
+      gameWin: false,
+      gameLost: false,
+      gridSeted: false
+    })
+
+    // let state = this.state
+    // state['grid'] = grid
+    // state['rows'] = this.state.targetRows
+    // state['collumns'] = this.state.targetCollumns
+    // state['bombs'] = this.state.targetBombs
+
+    // this.props.onStartGame(state)
     event.preventDefault();
+  }
+
+  resetGame(e) {
+    this.setState({
+      rows: this.state.targetRows,
+      collumns: this.state.targetCollumns,
+      bombs: this.state.targetBombs,
+      gameStaredAt: new Date(),
+      gameWin: false,
+      gameLost: false,
+      gridSeted: false
+    })
+
+    let grid = []
+
+    for (let i = 0; i < this.state.targetRows; i++) {
+      let row = Array(this.state.targetCollumns).fill({ value: 0, status: 'covered'})
+      grid.push(row)
+    }
+
+    this.setState({
+      grid: grid
+    })
+
+    e.preventDefault()
   }
 
   bombsFound(grid){
@@ -184,6 +253,35 @@ class Board extends Component {
     clearInterval(this.interval);
   }
 
+  componentDidUpdate(props){
+    // console.log(props, this.props)
+    if (this.props.currentGame) {
+      if (this.state.currentGameId !== this.props.currentGameId) {
+        console.log(this.state.currentGameId, this.props.currentGameId)
+        console.log(this.props.currentGame)
+        this.setState({
+          currentGameId: this.props.currentGameId,
+
+          // grid: this.props.initialState.grid,
+
+          // targetRows: this.props.initialState.targetRows,
+          // targetCollumns: this.props.initialState.targetCollumns,
+          // targetBombs: this.props.initialState.targetBombs,
+          // rows: this.props.initialState.rows,
+          // collumns: this.props.initialState.collumns,
+          // bombs: this.props.initialState.bombs,
+          grid: this.props.currentGame.grid,
+          // gridSeted: this.props.initialState.gridSeted,
+          // gameStaredAt: this.props.initialState.gameStaredAt,
+          // gameWin: this.props.initialState.gameWin,
+          // gameLost: this.props.initialState.gameLost,
+        })
+        // console.log(props, this.props)
+      }
+    }
+
+  }
+
   render () {
     let status = null
     if (this.state.gameWin) {
@@ -201,6 +299,9 @@ class Board extends Component {
 
     return (
       <div>
+        <button onClick={(e) => this.props.onSaveGame(this.state)}>Save</button>
+        <button onClick={(e) => this.resetGame(e)}>Reset</button>
+
         <form onSubmit={this.handleSubmit}>
           <label>
             Rows:
@@ -217,7 +318,7 @@ class Board extends Component {
             <input type="text" value={this.state.targetBombs} onChange={this.handleChangeBombs} />
           </label>
 
-          <input type="submit" value="Start new game" />
+          <input type="submit" value="New game" />
         </form>
 
         Time: {timeStatus}<br />
