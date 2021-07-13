@@ -6,7 +6,7 @@ class GameList extends Component {
       <ul>
         {
           this.props.games.map((game, i) => {
-            return  <li onClick={() => this.props.onSelectGame(i, game)} key={i}>{i}</li>
+            return  <li onClick={() => this.props.onSelectGame(i, game)} key={i}>Game {i}</li>
           })
         }
       </ul>

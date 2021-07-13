@@ -25,7 +25,6 @@ class Game extends Component {
   }
 
   onSaveGame(game_state) {
-    // console.log('on save', game_state)
     let games = this.state.games
     let currentGameId
 

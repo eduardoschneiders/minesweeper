@@ -136,29 +136,6 @@ class Board extends Component {
   }
 
   handleSubmit(event) {
-    // this.setState({
-    //   rows: this.state.targetRows,
-    //   collumns: this.state.targetCollumns,
-    //   bombs: this.state.targetBombs,
-    //   gameStaredAt: new Date(),
-    //   gameWin: false,
-    //   gameLost: false,
-    //   gridSeted: false
-    // })
-
-    // let grid = []
-
-    // for (let i = 0; i < this.state.targetRows; i++) {
-    //   let row = Array(this.state.targetCollumns).fill({ value: 0, status: 'covered'})
-    //   grid.push(row)
-    // }
-
-    // this.setState({
-    //   grid: grid
-    // })
-
-    // this.resetGame(event)
-
     this.setState({
       rows: this.state.targetRows,
       collumns: this.state.targetCollumns,
@@ -180,8 +157,6 @@ class Board extends Component {
       grid: grid
     })
 
-    console.log('heheheree', this.state)
-
     this.props.onStartGame({
       grid: grid,
       rows: this.state.targetRows,
@@ -193,13 +168,6 @@ class Board extends Component {
       gridSeted: false
     })
 
-    // let state = this.state
-    // state['grid'] = grid
-    // state['rows'] = this.state.targetRows
-    // state['collumns'] = this.state.targetCollumns
-    // state['bombs'] = this.state.targetBombs
-
-    // this.props.onStartGame(state)
     event.preventDefault();
   }
 
@@ -254,29 +222,19 @@ class Board extends Component {
   }
 
   componentDidUpdate(props){
-    // console.log(props, this.props)
     if (this.props.currentGame) {
       if (this.state.currentGameId !== this.props.currentGameId) {
-        console.log(this.state.currentGameId, this.props.currentGameId)
-        console.log(this.props.currentGame)
         this.setState({
           currentGameId: this.props.currentGameId,
-
-          // grid: this.props.initialState.grid,
-
-          // targetRows: this.props.initialState.targetRows,
-          // targetCollumns: this.props.initialState.targetCollumns,
-          // targetBombs: this.props.initialState.targetBombs,
-          // rows: this.props.initialState.rows,
-          // collumns: this.props.initialState.collumns,
-          // bombs: this.props.initialState.bombs,
+          rows: this.props.currentGame.rows,
+          collumns: this.props.currentGame.collumns,
+          bombs: this.props.currentGame.bombs,
           grid: this.props.currentGame.grid,
-          // gridSeted: this.props.initialState.gridSeted,
-          // gameStaredAt: this.props.initialState.gameStaredAt,
-          // gameWin: this.props.initialState.gameWin,
-          // gameLost: this.props.initialState.gameLost,
+          gridSeted: this.props.currentGame.gridSeted,
+          gameStaredAt: this.props.currentGame.gameStaredAt,
+          gameWin: this.props.currentGame.gameWin,
+          gameLost: this.props.currentGame.gameLost,
         })
-        // console.log(props, this.props)
       }
     }
 
