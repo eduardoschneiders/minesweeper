@@ -36,7 +36,7 @@ class User extends Component {
   }
 
   onSignup(username, password) {
-    fetch('http://localhost:5000/api/v1/users',
+    fetch(process.env.REACT_APP_API_HOST + '/api/v1/users',
 			  {
 			  	method: "post",
 			  	headers: { 'Content-Type':'application/json' },
@@ -58,7 +58,7 @@ class User extends Component {
   }
 
   onSignin(username, password) {
-    fetch('http://localhost:5000/api/v1/users/signin',
+    fetch(process.env.REACT_APP_API_HOST + '/api/v1/users/signin',
 			  {
 			  	method: "post",
 			  	headers: { 'Content-Type':'application/json' },
@@ -68,7 +68,7 @@ class User extends Component {
         .then(data => {
 
           if (data.status === 404) {
-            throw 'Failed to login';
+            throw new Error('Failed to login');
           }
 
           return data

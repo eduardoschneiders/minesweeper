@@ -41,7 +41,7 @@ class Game extends Component {
 
     if (this.state.currentUser) {
       let id = this.state.currentUser.id
-      fetch('http://localhost:5000/api/v1/users/' + id + '/games',
+      fetch(process.env.REACT_APP_API_HOST + '/api/v1/users/' + id + '/games',
           {
             method: "post",
             headers: { 'Content-Type':'application/json' },
