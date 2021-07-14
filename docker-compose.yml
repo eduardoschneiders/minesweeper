@@ -1,7 +1,26 @@
 services:
+  postgres:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+  api:
+    build: ./api
+    command: bundle exec rails s -p 5000 -b '0.0.0.0'
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./api:/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
   app:
     build: ./app
     ports:
       - '3000:3000'
     volumes:
       - ./app:/app
+    depends_on:
+      - api
