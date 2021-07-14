@@ -10,7 +10,8 @@ class Game extends Component {
     this.state = {
       games: [],
       initialState: null,
-      currentGameId: null
+      currentGameId: null,
+      currentUser: null
     }
   }
 
@@ -38,6 +39,24 @@ class Game extends Component {
       currentGameId = games.length -1
     }
 
+    if (this.state.currentUser) {
+      let id = this.state.currentUser.id
+      fetch('http://localhost:5000/api/v1/users/' + id + '/games',
+          {
+            method: "post",
+            headers: { 'Content-Type':'application/json' },
+            body: JSON.stringify({games: games})
+          }
+        )
+          .then(data => data.json())
+          .then(data => {
+            alert('Game saved')
+          })
+          .catch(function(error) {
+            alert('Error saving the game: ' + error.message);
+          });
+    }
+
     this.setState({
       games: games,
       currentGameId: currentGameId
@@ -48,6 +67,21 @@ class Game extends Component {
     this.setState({
       currentGameId: id,
       currentGame: game
+    })
+  }
+
+  onSignup(user) {
+    this.setState({
+      currentUser: user
+    })
+  }
+
+  onSignin(user) {
+    let games = JSON.parse(user.games)
+
+    this.setState({
+      currentUser: user,
+      games: games
     })
   }
 
@@ -63,7 +97,8 @@ class Game extends Component {
               onStartGame={this.onStartGame.bind(this)}
             />
           </div>
-          <User />
+
+          <User onSignup={this.onSignup.bind(this)} onSignin={this.onSignin.bind(this)} />
           <GameList games={this.state.games} onSelectGame={this.onSelectGame.bind(this)}/>
         </div>
       </div>

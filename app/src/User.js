@@ -28,18 +28,15 @@ class User extends Component {
   }
 
   handleChangeUsername(e) {
-    console.log('username')
     this.setState({currentUsername: e.target.value});
   }
 
   handleChangePassword(e) {
-    console.log('páss')
     this.setState({currentPassword: e.target.value});
   }
 
   onSignup(username, password) {
-    console.log('signup', username, password)
-    fetch('http://localhost:5000/',
+    fetch('http://localhost:5000/api/v1/users',
 			  {
 			  	method: "post",
 			  	headers: { 'Content-Type':'application/json' },
@@ -48,18 +45,53 @@ class User extends Component {
 		  )
         .then(data => data.json())
 	      .then(data => {
-          console.log(data)
+          this.props.onSignup(data)
         })
         .catch(function(error) {
-          console.log('Error to signup: ' + error.message);
+          alert('Error to signup: ' + error.message);
         });
+
+    this.setState({
+      currentUser: {username: username},
+      currentAction: ''
+    })
   }
 
   onSignin(username, password) {
-    console.log('signin', username, password)
+    fetch('http://localhost:5000/api/v1/users/signin',
+			  {
+			  	method: "post",
+			  	headers: { 'Content-Type':'application/json' },
+			  	body: JSON.stringify({username: username, password: password})
+			  }
+		  )
+        .then(data => {
+
+          if (data.status === 404) {
+            throw 'Failed to login';
+          }
+
+          return data
+        })
+        .then(data => data.json())
+	      .then(data => {
+          this.setState({
+            currentUser: {username: username},
+            currentAction: ''
+          })
+
+          this.props.onSignin(data)
+        })
+        .catch(function(error) {
+          alert('Failed to login', error);
+        });
   }
 
   render () {
+    let userStatus= null
+    if (this.state.currentUser) {
+      userStatus = "Olá " + this.state.currentUser.username
+    }
 
     let signupStatus = 'hide'
     let signinStatus = 'hide'
@@ -69,6 +101,8 @@ class User extends Component {
 
     return(
       <div className="user">
+        {userStatus}<br /><br />
+
         <button onClick={this.activateSignup}>
           Signup
         </button>
